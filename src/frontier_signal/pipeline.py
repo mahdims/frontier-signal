@@ -1,16 +1,12 @@
 from __future__ import annotations
 
-from collections import Counter
 import json
-from pathlib import Path
 
 from .config import load_organizations, load_topics
 from .db import ItemRow, pending_items, save_analysis
 from .llm import DeepSeekGateway, read_prompt, BudgetExceeded
 from .ranking import apply_evidence_caps, priority_score
-from .schemas import (
-    RawItem, ItemAnalysis, TranslationResult, ExtractionResult, ImpactResult, SkepticResult
-)
+from .schemas import ItemAnalysis, TranslationResult, ExtractionResult, ImpactResult, SkepticResult
 from .settings import settings
 
 
