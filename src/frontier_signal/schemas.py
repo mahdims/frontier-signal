@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from typing import Any
-from pydantic import BaseModel, Field, HttpUrl
+from dateutil.parser import parse as parse_datetime
+from pydantic import BaseModel, Field, field_validator
 
 
 class SourceConfig(BaseModel):
@@ -30,6 +31,14 @@ class RawItem(BaseModel):
     retrieved_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     metadata: dict[str, Any] = Field(default_factory=dict)
 
+    @field_validator("published_at", "retrieved_at", mode="before")
+    @classmethod
+    def parse_flexible_datetime(cls, value: Any) -> Any:
+        """Accept RFC 2822 dates commonly returned by RSS feeds."""
+        if isinstance(value, str):
+            return parse_datetime(value)
+        return value
+
 
 class AtomicClaim(BaseModel):
     claim: str
@@ -39,6 +48,14 @@ class AtomicClaim(BaseModel):
     confidence_from_source_only: int = Field(default=50, ge=0, le=100)
     requires_verification: bool = True
     evidence_urls: list[str] = Field(default_factory=list)
+
+    @field_validator("confidence_from_source_only", mode="before")
+    @classmethod
+    def normalize_fractional_confidence(cls, value: Any) -> Any:
+        """Normalize model-produced 0-1 confidence fractions to 0-100 integers."""
+        if isinstance(value, float) and 0 <= value <= 1:
+            return round(value * 100)
+        return value
 
 
 class ItemAnalysis(BaseModel):

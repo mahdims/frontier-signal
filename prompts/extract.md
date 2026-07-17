@@ -7,6 +7,7 @@ Rules:
 - Preserve numerical values and comparison conditions.
 - Mark unsupported promotional language.
 - Evidence URLs may only come from URLs present in the input.
+- Express confidence_from_source_only as an integer percentage from 0 to 100, never as a 0-1 fraction.
 - Do not use outside knowledge.
 
 Return only a JSON object:

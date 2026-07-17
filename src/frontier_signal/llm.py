@@ -55,7 +55,13 @@ class DeepSeekGateway:
         kwargs = {
             "model": model,
             "messages": [
-                {"role": "system", "content": system_prompt},
+                {
+                    "role": "system",
+                    "content": (
+                        f"{system_prompt}\n\n"
+                        "Return a valid JSON object that matches the requested schema."
+                    ),
+                },
                 {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
             ],
             "max_tokens": route["max_tokens"],
