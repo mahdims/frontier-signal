@@ -1,0 +1,92 @@
+name: Daily Frontier Signal radar
+
+on:
+  schedule:
+    # 11:30 UTC during PDT and 12:30 UTC during PST. This stays at least
+    # 90 minutes beyond DeepSeek's 06:00-10:00 UTC peak-pricing window.
+    - cron: "30 4 * * *"
+      timezone: "America/Vancouver"
+  workflow_dispatch:
+
+concurrency:
+  group: daily-frontier-signal-radar
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-email-radar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      DATABASE_URL: sqlite:///frontier_signal.db
+      TZ: America/Vancouver
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Restore pipeline history
+        uses: actions/cache/restore@v4
+        with:
+          path: frontier_signal.db
+          key: frontier-signal-db-${{ github.run_id }}
+          restore-keys: |
+            frontier-signal-db-
+
+      - name: Install Frontier Signal
+        run: python -m pip install .
+
+      - name: Run collection, analysis, and reporting
+        run: frontier-signal run-daily
+
+      - name: Locate today's report
+        id: report
+        shell: bash
+        run: |
+          report_path="$(find outputs/daily -type f -name '*.md' -print | sort | tail -n 1)"
+          if [[ -z "$report_path" ]]; then
+            echo "No daily report was generated" >&2
+            exit 1
+          fi
+          echo "path=$report_path" >> "$GITHUB_OUTPUT"
+          echo "date=$(date +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the daily report
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontier-signal-radar-${{ steps.report.outputs.date }}
+          path: ${{ steps.report.outputs.path }}
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Save pipeline history
+        uses: actions/cache/save@v4
+        with:
+          path: frontier_signal.db
+          key: frontier-signal-db-${{ github.run_id }}
+
+      - name: Email the radar through Gmail
+        uses: dawidd6/action-send-mail@v18
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.GMAIL_USERNAME }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: Frontier Signal daily radar — ${{ steps.report.outputs.date }}
+          to: ${{ secrets.REPORT_EMAIL_TO }}
+          from: Frontier Signal <${{ secrets.GMAIL_USERNAME }}>
+          html_body: file://${{ steps.report.outputs.path }}
+          convert_markdown: true
+          attachments: ${{ steps.report.outputs.path }}

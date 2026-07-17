@@ -1,0 +1,17 @@
+# macOS metadata
+.DS_Store
+
+# Python bytecode and tool caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+
+# Virtual environments and local configuration
+.venv/
+.env
+
+# Frontier Signal runtime data
+frontier_signal.db
+outputs/

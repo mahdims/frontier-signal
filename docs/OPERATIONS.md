@@ -1,5 +1,29 @@
 # Operations
 
+## GitHub Actions daily email
+
+The `Daily Frontier Signal radar` workflow runs the complete pipeline every day at
+04:30 in the `America/Vancouver` timezone. This corresponds to 11:30 UTC during PDT
+and 12:30 UTC during PST, keeping the start at least 90 minutes beyond DeepSeek's
+06:00–10:00 UTC peak-pricing window. GitHub handles daylight-saving changes.
+It can also be started manually with **Actions → Daily Frontier Signal radar → Run workflow**.
+
+Add these repository secrets under **Settings → Secrets and variables → Actions**:
+
+- `DEEPSEEK_API_KEY`: API key used for analysis and synthesis.
+- `GMAIL_USERNAME`: Gmail address used to send the report.
+- `GMAIL_APP_PASSWORD`: Google App Password for that Gmail account, not its normal password.
+- `REPORT_EMAIL_TO`: destination Gmail address (it may be the same address).
+- `YOUTUBE_API_KEY`: optional; only needed if the YouTube collector is enabled.
+
+The workflow uses the built-in `GITHUB_TOKEN` for GitHub collection. It restores the
+SQLite database from the previous run so already-seen items are not analyzed and emailed
+again, uploads each Markdown report as a 30-day workflow artifact, and sends the same
+report as a rendered HTML email with the Markdown file attached.
+
+Scheduled workflows only run from the repository's default branch, so merge the workflow
+there after testing it with a manual run.
+
 ## Recommended launchd schedule on macOS
 
 Create a shell script that activates the virtual environment and runs:
