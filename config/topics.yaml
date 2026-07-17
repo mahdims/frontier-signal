@@ -1,0 +1,52 @@
+topics:
+  agent_evaluation:
+    weight: 1.0
+    aliases: ["agent evaluation", "agent benchmark", "agentic benchmark", "智能体评测", "智能体基准"]
+  lifelong_agents:
+    weight: 1.0
+    aliases: ["lifelong agent", "continual agent", "self-evolving agent", "self-improving agent", "终身学习智能体", "自进化智能体"]
+  test_time_scaling:
+    weight: 1.0
+    aliases: ["test-time scaling", "test time compute", "inference-time search", "测试时扩展", "推理时计算"]
+  agent_memory:
+    weight: 1.0
+    aliases: ["agent memory", "long-term memory", "memory benchmark", "智能体记忆", "长期记忆"]
+  multi_agent:
+    weight: 1.0
+    aliases: ["multi-agent", "agent debate", "agent collaboration", "多智能体", "智能体协作"]
+  vlm_embedding:
+    weight: 1.0
+    aliases: ["vision-language embedding", "image-text embedding", "VLM embedding", "视觉语言嵌入", "图文嵌入"]
+  multimodal_retrieval:
+    weight: 1.0
+    aliases: ["multimodal retrieval", "image text retrieval", "late interaction", "MaxSim", "多模态检索"]
+  spatial_reasoning:
+    weight: 1.0
+    aliases: ["spatial reasoning", "scene graph", "spatial relation", "空间推理", "场景图"]
+  neural_combinatorial_optimization:
+    weight: 1.0
+    aliases: ["neural combinatorial optimization", "learning to optimize", "神经组合优化"]
+  llm_optimization_modeling:
+    weight: 1.0
+    aliases: ["LLM optimization modeling", "text to optimization model", "LLM for OR", "大模型优化建模", "运筹大模型"]
+  vehicle_routing:
+    weight: 1.0
+    aliases: ["vehicle routing", "VRP", "CVRP", "routing solver", "车辆路径", "路径优化"]
+  metaheuristics:
+    weight: 1.0
+    aliases: ["metaheuristic", "tabu search", "large neighborhood search", "LNS", "元启发式", "禁忌搜索", "大邻域搜索"]
+  solver_infrastructure:
+    weight: 1.0
+    aliases: ["MIP solver", "MILP solver", "SCIP", "Gurobi", "HiGHS", "CP-SAT", "求解器"]
+  inference_systems:
+    weight: 0.75
+    aliases: ["inference engine", "serving system", "KV cache", "speculative decoding", "推理引擎", "推测解码"]
+  world_models:
+    weight: 0.75
+    aliases: ["world model", "video world model", "世界模型"]
+  synthetic_data:
+    weight: 0.75
+    aliases: ["synthetic data", "data generation", "合成数据"]
+  generic_chatbot:
+    weight: 0.25
+    aliases: ["chatbot", "AI assistant", "聊天机器人"]

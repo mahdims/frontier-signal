@@ -1,0 +1,199 @@
+from __future__ import annotations
+
+import hashlib
+import json
+from datetime import datetime, timezone
+from typing import Iterable
+
+from sqlalchemy import (
+    Boolean, DateTime, Float, Integer, String, Text, UniqueConstraint, create_engine, select
+)
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
+
+from .schemas import RawItem, ItemAnalysis
+from .settings import settings
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+class ItemRow(Base):
+    __tablename__ = "items"
+    __table_args__ = (UniqueConstraint("source_id", "external_id", name="uq_source_external"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    source_id: Mapped[str] = mapped_column(String(120), index=True)
+    source_type: Mapped[str] = mapped_column(String(80))
+    external_id: Mapped[str] = mapped_column(String(300))
+    url: Mapped[str] = mapped_column(Text)
+    canonical_url: Mapped[str] = mapped_column(Text, index=True)
+    title: Mapped[str] = mapped_column(Text)
+    content: Mapped[str] = mapped_column(Text, default="")
+    author_name: Mapped[str | None] = mapped_column(String(300), nullable=True)
+    language: Mapped[str] = mapped_column(String(16), default="en")
+    region: Mapped[str] = mapped_column(String(32), default="GLOBAL")
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    retrieved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    metadata_json: Mapped[str] = mapped_column(Text, default="{}")
+    content_hash: Mapped[str] = mapped_column(String(64), index=True)
+    visibility: Mapped[str] = mapped_column(String(32), default="public")
+    analyzed: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+
+
+class AnalysisRow(Base):
+    __tablename__ = "analyses"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    item_id: Mapped[int] = mapped_column(Integer, unique=True, index=True)
+    analysis_json: Mapped[str] = mapped_column(Text)
+    priority_score: Mapped[float] = mapped_column(Float, default=0.0, index=True)
+    label: Mapped[str] = mapped_column(String(64), default="ROUTINE")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class UsageRow(Base):
+    __tablename__ = "llm_usage"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    task: Mapped[str] = mapped_column(String(64))
+    model: Mapped[str] = mapped_column(String(100))
+    input_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    output_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    estimated_cost_usd: Mapped[float] = mapped_column(Float, default=0.0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class FeedbackRow(Base):
+    __tablename__ = "feedback"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    item_id: Mapped[int] = mapped_column(Integer, index=True)
+    verdict: Mapped[str] = mapped_column(String(32))
+    project: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+engine = create_engine(settings.database_url, future=True)
+SessionLocal = sessionmaker(engine, expire_on_commit=False)
+
+
+def init_db() -> None:
+    Base.metadata.create_all(engine)
+
+
+def canonicalize_url(url: str) -> str:
+    clean = url.strip().split("#", 1)[0]
+    if "?" in clean:
+        base, query = clean.split("?", 1)
+        kept = [
+            part for part in query.split("&")
+            if not part.lower().startswith(("utm_", "ref=", "source=", "spm="))
+        ]
+        clean = base + (("?" + "&".join(kept)) if kept else "")
+    return clean.rstrip("/")
+
+
+def item_hash(item: RawItem) -> str:
+    blob = f"{item.title.strip().lower()}\n{item.content.strip()}".encode("utf-8", errors="ignore")
+    return hashlib.sha256(blob).hexdigest()
+
+
+def save_items(items: Iterable[RawItem]) -> tuple[int, int]:
+    inserted = 0
+    skipped = 0
+    with SessionLocal() as session:
+        for item in items:
+            exists = session.scalar(
+                select(ItemRow).where(
+                    ItemRow.source_id == item.source_id,
+                    ItemRow.external_id == item.external_id,
+                )
+            )
+            if exists:
+                skipped += 1
+                continue
+
+            visibility = str(item.metadata.get("visibility", "public"))
+            row = ItemRow(
+                source_id=item.source_id,
+                source_type=item.source_type,
+                external_id=item.external_id,
+                url=item.url,
+                canonical_url=canonicalize_url(item.url),
+                title=item.title,
+                content=item.content,
+                author_name=item.author_name,
+                language=item.language,
+                region=item.region,
+                published_at=item.published_at,
+                retrieved_at=item.retrieved_at,
+                metadata_json=json.dumps(item.metadata, ensure_ascii=False),
+                content_hash=item_hash(item),
+                visibility=visibility,
+            )
+            session.add(row)
+            inserted += 1
+        session.commit()
+    return inserted, skipped
+
+
+def pending_items(limit: int) -> list[ItemRow]:
+    with SessionLocal() as session:
+        rows = session.scalars(
+            select(ItemRow)
+            .where(ItemRow.analyzed.is_(False))
+            .order_by(ItemRow.retrieved_at.asc())
+            .limit(limit)
+        ).all()
+        return list(rows)
+
+
+def save_analysis(item_id: int, analysis: ItemAnalysis) -> None:
+    with SessionLocal() as session:
+        row = AnalysisRow(
+            item_id=item_id,
+            analysis_json=analysis.model_dump_json(),
+            priority_score=analysis.priority_score,
+            label=analysis.recommended_label,
+            created_at=datetime.now(timezone.utc),
+        )
+        session.add(row)
+        item = session.get(ItemRow, item_id)
+        if item:
+            item.analyzed = True
+        session.commit()
+
+
+def recent_analyses(since: datetime, limit: int = 200) -> list[tuple[ItemRow, ItemAnalysis]]:
+    with SessionLocal() as session:
+        pairs = session.execute(
+            select(ItemRow, AnalysisRow)
+            .join(AnalysisRow, AnalysisRow.item_id == ItemRow.id)
+            .where(AnalysisRow.created_at >= since)
+            .order_by(AnalysisRow.priority_score.desc())
+            .limit(limit)
+        ).all()
+        return [(item, ItemAnalysis.model_validate_json(a.analysis_json)) for item, a in pairs]
+
+
+def log_usage(task: str, model: str, input_tokens: int, output_tokens: int, cost: float) -> None:
+    with SessionLocal() as session:
+        session.add(UsageRow(
+            task=task,
+            model=model,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            estimated_cost_usd=cost,
+            created_at=datetime.now(timezone.utc),
+        ))
+        session.commit()
+
+
+def today_cost() -> float:
+    now = datetime.now(timezone.utc)
+    start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    with SessionLocal() as session:
+        rows = session.scalars(select(UsageRow).where(UsageRow.created_at >= start)).all()
+        return float(sum(r.estimated_cost_usd for r in rows))

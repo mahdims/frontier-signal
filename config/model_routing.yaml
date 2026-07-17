@@ -1,0 +1,38 @@
+pricing_per_million_tokens_usd:
+  deepseek-v4-flash:
+    input_cache_hit: 0.0028
+    input_cache_miss: 0.14
+    output: 0.28
+  deepseek-v4-pro:
+    input_cache_hit: 0.003625
+    input_cache_miss: 0.435
+    output: 0.87
+
+routes:
+  translate:
+    model: deepseek-v4-flash
+    thinking: disabled
+    max_tokens: 1800
+  extract:
+    model: deepseek-v4-flash
+    thinking: disabled
+    max_tokens: 2500
+  impact:
+    model: deepseek-v4-flash
+    thinking: disabled
+    max_tokens: 2200
+  skeptic:
+    model: deepseek-v4-pro
+    thinking: enabled
+    reasoning_effort: high
+    max_tokens: 4500
+  daily_editor:
+    model: deepseek-v4-pro
+    thinking: enabled
+    reasoning_effort: high
+    max_tokens: 5000
+  weekly_synthesis:
+    model: deepseek-v4-pro
+    thinking: enabled
+    reasoning_effort: max
+    max_tokens: 8000

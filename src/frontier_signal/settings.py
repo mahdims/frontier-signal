@@ -1,0 +1,29 @@
+from pathlib import Path
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+    deepseek_api_key: str = ""
+    deepseek_base_url: str = "https://api.deepseek.com"
+    deepseek_flash_model: str = "deepseek-v4-flash"
+    deepseek_pro_model: str = "deepseek-v4-pro"
+
+    github_token: str = ""
+    youtube_api_key: str = ""
+
+    database_url: str = "sqlite:///frontier_signal.db"
+    config_dir: Path = Path("config")
+    output_dir: Path = Path("outputs")
+    prompt_dir: Path = Path("prompts")
+
+    max_daily_llm_cost_usd: float = 3.0
+    max_pro_calls_per_day: int = 25
+    max_items_analyzed_per_run: int = 150
+    pro_priority_threshold: float = 68.0
+    report_max_items: int = 15
+    share_private_items: bool = False
+
+
+settings = Settings()

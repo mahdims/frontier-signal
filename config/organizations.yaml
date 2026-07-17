@@ -1,0 +1,101 @@
+organizations:
+  - canonical: DeepSeek
+    region: CN
+    aliases: ["DeepSeek", "深度求索"]
+    URLs:
+      homepage: "https://www.deepseek.com/"
+      github: "https://github.com/deepseek-ai"
+      huggingface: "https://huggingface.co/deepseek-ai"
+  - canonical: Alibaba Qwen
+    region: CN
+    aliases: ["Qwen", "通义千问", "千问", "阿里千问"]
+    URLs:
+      homepage: "https://qwen.ai/"
+      github: "https://github.com/QwenLM"
+      huggingface: "https://huggingface.co/Qwen"
+      modelscope: "https://modelscope.cn/organization/qwen"
+  - canonical: ByteDance Seed
+    region: CN
+    aliases: ["ByteDance Seed", "字节Seed", "Seed团队", "豆包大模型团队"]
+    URLs:
+      homepage: "https://seed.bytedance.com/"
+  - canonical: Zhipu AI
+    region: CN
+    aliases: ["Zhipu AI", "智谱AI", "智谱", "Z.ai", "GLM"]
+    URLs:
+      homepage: "https://www.z.ai/"
+      github: "https://github.com/THUDM"
+  - canonical: Moonshot AI
+    region: CN
+    aliases: ["Moonshot AI", "月之暗面", "Kimi"]
+    URLs:
+      homepage: "https://www.moonshot.cn/"
+  - canonical: MiniMax
+    region: CN
+    aliases: ["MiniMax", "稀宇科技"]
+    URLs:
+      homepage: "https://www.minimaxi.com/"
+  - canonical: Baichuan AI
+    region: CN
+    aliases: ["Baichuan AI", "百川智能", "百川"]
+    URLs:
+      homepage: "https://www.baichuan-ai.com/"
+  - canonical: StepFun
+    region: CN
+    aliases: ["StepFun", "阶跃星辰", "阶跃"]
+    URLs:
+      homepage: "https://www.stepfun.com/"
+  - canonical: BAAI
+    region: CN
+    aliases: ["BAAI", "北京智源", "智源研究院", "智源"]
+    URLs:
+      homepage: "https://www.baai.ac.cn/"
+      community: "https://hub.baai.ac.cn/"
+      github: "https://github.com/FlagOpen"
+  - canonical: Shanghai AI Laboratory
+    region: CN
+    aliases: ["Shanghai AI Lab", "上海人工智能实验室", "上海AI实验室"]
+    URLs:
+      homepage: "https://www.shlab.org.cn/"
+      github: "https://github.com/InternLM"
+  - canonical: ModelBest
+    region: CN
+    aliases: ["ModelBest", "面壁智能", "OpenBMB"]
+    URLs:
+      homepage: "https://www.modelbest.cn/"
+      github: "https://github.com/OpenBMB"
+  - canonical: ModelScope
+    region: CN
+    aliases: ["ModelScope", "魔搭社区", "魔搭"]
+    URLs:
+      homepage: "https://modelscope.cn/"
+      github: "https://github.com/modelscope"
+  - canonical: OpenI
+    region: CN
+    aliases: ["OpenI", "启智社区", "新一代人工智能开源开放平台"]
+    URLs:
+      homepage: "https://www.openi.org.cn/"
+  - canonical: Google DeepMind
+    region: GLOBAL
+    aliases: ["Google DeepMind", "DeepMind"]
+    URLs:
+      homepage: "https://deepmind.google/"
+      github: "https://github.com/google-deepmind"
+  - canonical: Meta FAIR
+    region: GLOBAL
+    aliases: ["Meta FAIR", "FAIR", "Meta AI"]
+    URLs:
+      homepage: "https://ai.meta.com/research/"
+      github: "https://github.com/facebookresearch"
+  - canonical: NVIDIA Research
+    region: GLOBAL
+    aliases: ["NVIDIA Research", "NVIDIA AI"]
+    URLs:
+      homepage: "https://research.nvidia.com/"
+      github: "https://github.com/NVIDIA"
+  - canonical: Hugging Face
+    region: GLOBAL
+    aliases: ["Hugging Face", "HF"]
+    URLs:
+      homepage: "https://huggingface.co/"
+      github: "https://github.com/huggingface"

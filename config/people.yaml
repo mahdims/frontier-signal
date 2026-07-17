@@ -1,0 +1,53 @@
+# Seed people are discovery targets, not permanent authority rankings.
+# Current roles must be reverified and stored with a verification timestamp.
+people:
+  - {name: "Andrej Karpathy", region: GLOBAL, topics: ["LLMs", "AI systems", "education"]}
+  - {name: "François Chollet", region: GLOBAL, topics: ["reasoning", "evaluation", "representation learning"]}
+  - {name: "Yann LeCun", region: GLOBAL, topics: ["world models", "representation learning"]}
+  - {name: "Jeff Dean", region: GLOBAL, topics: ["AI systems", "large-scale ML"]}
+  - {name: "Demis Hassabis", region: GLOBAL, topics: ["frontier AI", "science"]}
+  - {name: "Thomas Wolf", region: GLOBAL, topics: ["open-source ML", "models"]}
+  - {name: "Tri Dao", region: GLOBAL, topics: ["efficient attention", "GPU kernels"]}
+  - {name: "Percy Liang", region: GLOBAL, topics: ["foundation models", "evaluation"]}
+  - {name: "Chelsea Finn", region: GLOBAL, topics: ["robot learning", "adaptation"]}
+  - {name: "Sergey Levine", region: GLOBAL, topics: ["robot learning", "reinforcement learning"]}
+  - {name: "Pieter Abbeel", region: GLOBAL, topics: ["robotics", "agents"]}
+  - {name: "Jim Fan", region: GLOBAL, topics: ["embodied agents", "world models"]}
+  - {name: "Lilian Weng", region: GLOBAL, topics: ["agents", "reinforcement learning"]}
+  - {name: "Noam Shazeer", region: GLOBAL, topics: ["LLMs", "MoE"]}
+  - {name: "Aidan Gomez", region: GLOBAL, topics: ["LLMs", "enterprise AI"]}
+  - {name: "Jason Wei", region: GLOBAL, topics: ["reasoning", "agents"]}
+  - {name: "Shunyu Yao", region: GLOBAL, topics: ["agents", "reasoning"]}
+  - {name: "Yejin Choi", region: GLOBAL, topics: ["reasoning", "evaluation"]}
+  - {name: "Sebastian Raschka", region: GLOBAL, topics: ["LLM engineering", "education"]}
+  - {name: "Nathan Lambert", region: GLOBAL, topics: ["post-training", "open models"]}
+  - {name: "Simon Willison", region: GLOBAL, topics: ["LLM tooling", "model releases"]}
+  - {name: "Chip Huyen", region: GLOBAL, topics: ["AI systems", "production ML"]}
+  - {name: "Hamel Husain", region: GLOBAL, topics: ["LLM evaluation", "agents"]}
+  - {name: "Eugene Yan", region: GLOBAL, topics: ["recommendation", "LLM systems"]}
+
+  - {name: "Andrea Lodi", region: GLOBAL, topics: ["mixed-integer optimization", "ML for OR"]}
+  - {name: "Pascal Van Hentenryck", region: GLOBAL, topics: ["optimization", "AI for decision-making"]}
+  - {name: "Warren Powell", region: GLOBAL, topics: ["sequential decisions", "reinforcement learning"]}
+  - {name: "John Hooker", region: GLOBAL, topics: ["logic-based optimization", "AI and OR"]}
+  - {name: "Jeff Linderoth", region: GLOBAL, topics: ["mixed-integer optimization", "solvers"]}
+  - {name: "Miles Lubin", region: GLOBAL, topics: ["optimization software", "JuMP"]}
+  - {name: "Juan Pablo Vielma", region: GLOBAL, topics: ["mixed-integer optimization", "formulations"]}
+  - {name: "Ted Ralphs", region: GLOBAL, topics: ["open-source optimization", "COIN-OR"]}
+  - {name: "Tobias Achterberg", region: GLOBAL, topics: ["MIP solvers", "SCIP", "Gurobi"]}
+  - {name: "Keld Helsgaun", region: GLOBAL, topics: ["TSP", "LKH"]}
+  - {name: "David Pisinger", region: GLOBAL, topics: ["combinatorial optimization", "knapsack", "routing"]}
+  - {name: "Stefan Ropke", region: GLOBAL, topics: ["vehicle routing", "large neighborhood search"]}
+
+  - {name: "Liang Wenfeng", name_zh: "梁文锋", region: CN, topics: ["frontier models", "DeepSeek"]}
+  - {name: "Junyang Lin", name_zh: "林俊旸", region: CN, topics: ["Qwen", "LLMs"]}
+  - {name: "Tang Jie", name_zh: "唐杰", region: CN, topics: ["knowledge graphs", "LLMs", "Zhipu"]}
+  - {name: "Zhang Peng", name_zh: "张鹏", region: CN, topics: ["Zhipu", "commercial AI"]}
+  - {name: "Yang Zhilin", name_zh: "杨植麟", region: CN, topics: ["Moonshot AI", "long context"]}
+  - {name: "Yan Junjie", name_zh: "闫俊杰", region: CN, topics: ["MiniMax", "multimodal AI"]}
+  - {name: "Wang Xiaochuan", name_zh: "王小川", region: CN, topics: ["Baichuan AI", "LLMs"]}
+  - {name: "Li Dahai", name_zh: "李大海", region: CN, topics: ["ModelBest", "OpenBMB"]}
+  - {name: "Liu Zhiyuan", name_zh: "刘知远", region: CN, topics: ["OpenBMB", "NLP", "agents"]}
+  - {name: "Zhou Bowen", name_zh: "周伯文", region: CN, topics: ["BAAI", "foundation models"]}
+  - {name: "Zhou Zhihua", name_zh: "周志华", region: CN, topics: ["machine learning", "AI research"]}
+  - {name: "Zhang Yaqin", name_zh: "张亚勤", region: CN, topics: ["AI systems", "Tsinghua AIR"]}

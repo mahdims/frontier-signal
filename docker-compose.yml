@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: frontier
+      POSTGRES_PASSWORD: frontier
+      POSTGRES_DB: frontier_signal
+    ports:
+      - "5432:5432"
+    volumes:
+      - frontier_signal_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U frontier -d frontier_signal"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  frontier_signal_pg:

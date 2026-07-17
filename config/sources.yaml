@@ -1,0 +1,199 @@
+sources:
+  # Academic and technical sources
+  - id: arxiv_agents
+    name: arXiv — Agents and test-time compute
+    type: arxiv
+    enabled: true
+    region: GLOBAL
+    language: en
+    config:
+      query: 'all:"agent evaluation" OR all:"self-evolving agent" OR all:"test-time scaling" OR all:"agent memory"'
+      max_results: 60
+
+  - id: arxiv_vlm
+    name: arXiv — VLM embeddings and spatial retrieval
+    type: arxiv
+    enabled: true
+    region: GLOBAL
+    language: en
+    config:
+      query: 'all:"vision-language embedding" OR all:"multimodal retrieval" OR all:"spatial reasoning" OR all:"late interaction"'
+      max_results: 60
+
+  - id: arxiv_optimization
+    name: arXiv — Optimization and learned search
+    type: arxiv
+    enabled: true
+    region: GLOBAL
+    language: en
+    config:
+      query: 'cat:math.OC AND (all:"large language model" OR all:"neural combinatorial optimization" OR all:"vehicle routing" OR all:"learned search")'
+      max_results: 60
+
+  - id: optimization_online
+    name: Optimization Online
+    type: rss
+    enabled: true
+    region: GLOBAL
+    language: en
+    homepage: https://optimization-online.org/
+    config:
+      feed_url: https://optimization-online.org/feed/
+
+  # OpenReview venue IDs may change. Keep enabled=false until verified for the target cycle.
+  - id: openreview_iclr_2026
+    name: OpenReview — ICLR 2026
+    type: openreview
+    enabled: false
+    region: GLOBAL
+    language: en
+    homepage: https://openreview.net/
+    config:
+      venue_id: ICLR.cc/2026/Conference
+      limit: 500
+
+  - id: openreview_icml_2026
+    name: OpenReview — ICML 2026
+    type: openreview
+    enabled: false
+    region: GLOBAL
+    language: en
+    homepage: https://openreview.net/
+    config:
+      venue_id: ICML.cc/2026/Conference
+      limit: 500
+
+  # Code and implementation signals
+  - id: github_transformers
+    name: GitHub — Hugging Face Transformers
+    type: github_repo
+    enabled: true
+    region: GLOBAL
+    language: en
+    config: {repo: huggingface/transformers, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+
+  - id: github_vllm
+    name: GitHub — vLLM
+    type: github_repo
+    enabled: true
+    region: GLOBAL
+    language: en
+    config: {repo: vllm-project/vllm, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+
+  - id: github_sglang
+    name: GitHub — SGLang
+    type: github_repo
+    enabled: true
+    region: GLOBAL
+    language: en
+    config: {repo: sgl-project/sglang, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+
+  - id: github_llamacpp
+    name: GitHub — llama.cpp
+    type: github_repo
+    enabled: true
+    region: GLOBAL
+    language: en
+    config: {repo: ggml-org/llama.cpp, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+
+  - id: github_mlx_lm
+    name: GitHub — MLX LM
+    type: github_repo
+    enabled: true
+    region: GLOBAL
+    language: en
+    config: {repo: ml-explore/mlx-lm, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+
+  - id: github_qwen3
+    name: GitHub — Qwen3
+    type: github_repo
+    enabled: true
+    region: CN
+    language: en
+    config: {repo: QwenLM/Qwen3, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+
+  - id: github_deepseek_org
+    name: GitHub — DeepSeek organization
+    type: github_org
+    enabled: true
+    region: CN
+    language: en
+    config: {org: deepseek-ai, repo_limit: 30}
+
+  - id: github_openbmb
+    name: GitHub — OpenBMB
+    type: github_org
+    enabled: true
+    region: CN
+    language: en
+    config: {org: OpenBMB, repo_limit: 30}
+
+  - id: github_internlm
+    name: GitHub — InternLM
+    type: github_org
+    enabled: true
+    region: CN
+    language: en
+    config: {org: InternLM, repo_limit: 30}
+
+  - id: github_scip
+    name: GitHub — SCIP Optimization Suite
+    type: github_repo
+    enabled: true
+    region: GLOBAL
+    language: en
+    config: {repo: scipopt/scip, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+
+  - id: github_highs
+    name: GitHub — HiGHS
+    type: github_repo
+    enabled: true
+    region: GLOBAL
+    language: en
+    config: {repo: ERGO-Code/HiGHS, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+
+  - id: github_ortools
+    name: GitHub — OR-Tools
+    type: github_repo
+    enabled: true
+    region: GLOBAL
+    language: en
+    config: {repo: google/or-tools, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+
+  # Developer/social impact
+  - id: hackernews_ai
+    name: Hacker News — AI/OR filter
+    type: hackernews
+    enabled: true
+    region: GLOBAL
+    language: en
+    config:
+      mode: new
+      max_items: 150
+      keywords: ["agent", "LLM", "vision language", "inference", "DeepSeek", "Qwen", "optimization", "solver", "vehicle routing", "benchmark"]
+
+  - id: youtube_technical
+    name: YouTube — Technical AI/OR search
+    type: youtube
+    enabled: false
+    region: GLOBAL
+    language: en
+    config:
+      queries: ["agent evaluation", "test-time scaling", "LLM inference systems", "neural combinatorial optimization", "大模型 智能体 评测", "运筹优化 大模型"]
+      max_results_per_query: 10
+
+  # China public sources: monitored/manual unless a stable feed is configured.
+  - {id: baai_hub, name: "智源社区 / BAAI Hub", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://hub.baai.ac.cn/"}
+  - {id: modelscope, name: "魔搭社区 / ModelScope", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://modelscope.cn/"}
+  - {id: openi, name: "启智社区 / OpenI", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.openi.org.cn/"}
+  - {id: jiqizhixin, name: "机器之心", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.jiqizhixin.com/"}
+  - {id: qbitai, name: "量子位", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.qbitai.com/"}
+  - {id: xinzhiyuan, name: "新智元", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.aixinzhijie.com/"}
+  - {id: infoq_cn_ai, name: "InfoQ 中国 AI", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.infoq.cn/topic/AI"}
+  - {id: kr36_ai, name: "36氪 AI", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.36kr.com/"}
+  - {id: leiphone_ai, name: "雷峰网 AI", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.leiphone.com/category/ai"}
+  - {id: jike_ai, name: "即刻 / Jike", type: manual_private, enabled: true, region: CN, language: zh, homepage: "https://web.okjike.com/"}
+  - {id: weibo_ai, name: "微博 / Weibo", type: manual_private, enabled: true, region: CN, language: zh, homepage: "https://weibo.com/"}
+  - {id: zhihu_ai, name: "知乎 / Zhihu", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.zhihu.com/"}
+  - {id: wechat_public, name: "微信公众号", type: manual_private, enabled: true, region: CN, language: zh, homepage: "https://mp.weixin.qq.com/"}
+  - {id: wechat_private, name: "微信技术群", type: manual_private, enabled: true, region: CN, language: zh}
