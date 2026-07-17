@@ -13,13 +13,22 @@ Add these repository secrets under **Settings → Secrets and variables → Acti
 - `DEEPSEEK_API_KEY`: API key used for analysis and synthesis.
 - `GMAIL_USERNAME`: Gmail address used to send the report.
 - `GMAIL_APP_PASSWORD`: Google App Password for that Gmail account, not its normal password.
-- `REPORT_EMAIL_TO`: destination Gmail address (it may be the same address).
 - `YOUTUBE_API_KEY`: optional; only needed if the YouTube collector is enabled.
+
+Add this repository variable under **Settings → Secrets and variables → Actions → Variables**:
+
+- `REPORT_EMAIL_TO`: destination Gmail address (it may be the same address).
 
 The workflow uses the built-in `GITHUB_TOKEN` for GitHub collection. It restores the
 SQLite database from the previous run so already-seen items are not analyzed and emailed
 again, uploads each Markdown report as a 30-day workflow artifact, and sends the same
-report as a rendered HTML email with the Markdown file attached.
+report as a rendered HTML email with the Markdown file attached. The uploaded artifact
+also contains the SQLite database, so collected items, analyses, and LLM usage records can
+be recovered independently of the workflow cache.
+
+If email delivery fails after a successful run, manually run the workflow with
+`delivery_only` enabled. It restores the cached database, regenerates and sends the report,
+and does not collect sources or call DeepSeek.
 
 Scheduled workflows only run from the repository's default branch, so merge the workflow
 there after testing it with a manual run.

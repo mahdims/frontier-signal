@@ -7,6 +7,12 @@ on:
     - cron: "30 4 * * *"
       timezone: "America/Vancouver"
   workflow_dispatch:
+    inputs:
+      delivery_only:
+        description: Restore saved results and resend without collecting or calling DeepSeek
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: daily-frontier-signal-radar
@@ -30,6 +36,17 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v4
 
+      - name: Validate email configuration
+        shell: bash
+        env:
+          REPORT_EMAIL_TO: ${{ vars.REPORT_EMAIL_TO }}
+          GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: |
+          [[ -n "$REPORT_EMAIL_TO" ]] || { echo "Repository variable REPORT_EMAIL_TO is missing" >&2; exit 1; }
+          [[ -n "$GMAIL_USERNAME" ]] || { echo "Secret GMAIL_USERNAME is missing" >&2; exit 1; }
+          [[ -n "$GMAIL_APP_PASSWORD" ]] || { echo "Secret GMAIL_APP_PASSWORD is missing" >&2; exit 1; }
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -48,7 +65,14 @@ jobs:
         run: python -m pip install .
 
       - name: Run collection, analysis, and reporting
+        if: ${{ !inputs.delivery_only }}
         run: frontier-signal run-daily
+
+      - name: Regenerate report from saved results
+        if: ${{ inputs.delivery_only }}
+        run: |
+          test -s frontier_signal.db || { echo "No cached database was restored" >&2; exit 1; }
+          frontier-signal report --hours 168
 
       - name: Locate today's report
         id: report
@@ -62,15 +86,18 @@ jobs:
           echo "path=$report_path" >> "$GITHUB_OUTPUT"
           echo "date=$(date +%F)" >> "$GITHUB_OUTPUT"
 
-      - name: Upload the daily report
+      - name: Upload the daily report and database
         uses: actions/upload-artifact@v4
         with:
           name: frontier-signal-radar-${{ steps.report.outputs.date }}
-          path: ${{ steps.report.outputs.path }}
+          path: |
+            ${{ steps.report.outputs.path }}
+            frontier_signal.db
           if-no-files-found: error
           retention-days: 30
 
       - name: Save pipeline history
+        if: ${{ !inputs.delivery_only }}
         uses: actions/cache/save@v4
         with:
           path: frontier_signal.db
@@ -85,7 +112,7 @@ jobs:
           username: ${{ secrets.GMAIL_USERNAME }}
           password: ${{ secrets.GMAIL_APP_PASSWORD }}
           subject: Frontier Signal daily radar — ${{ steps.report.outputs.date }}
-          to: ${{ secrets.REPORT_EMAIL_TO }}
+          to: ${{ vars.REPORT_EMAIL_TO }}
           from: Frontier Signal <${{ secrets.GMAIL_USERNAME }}>
           html_body: file://${{ steps.report.outputs.path }}
           convert_markdown: true
