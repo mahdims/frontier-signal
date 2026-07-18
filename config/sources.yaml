@@ -164,7 +164,7 @@ sources:
   - id: x_ai_or
     name: X — high-signal AI/OR posts
     type: x
-    enabled: false
+    enabled: true
     region: GLOBAL
     language: en
     homepage: https://x.com/
