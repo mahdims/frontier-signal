@@ -14,6 +14,8 @@ Add these repository secrets under **Settings → Secrets and variables → Acti
 - `GMAIL_USERNAME`: Gmail address used to send the report.
 - `GMAIL_APP_PASSWORD`: Google App Password for that Gmail account, not its normal password.
 - `YOUTUBE_API_KEY`: optional; only needed if the YouTube collector is enabled.
+- `X_BEARER_TOKEN`: optional; required before enabling the X collector. X API usage may
+  incur separate pay-per-use charges.
 
 Add this repository variable under **Settings → Secrets and variables → Actions → Variables**:
 

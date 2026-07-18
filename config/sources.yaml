@@ -70,7 +70,7 @@ sources:
     enabled: true
     region: GLOBAL
     language: en
-    config: {repo: huggingface/transformers, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+    config: {repo: huggingface/transformers, include_releases: true, include_issues: false}
 
   - id: github_vllm
     name: GitHub — vLLM
@@ -78,7 +78,7 @@ sources:
     enabled: true
     region: GLOBAL
     language: en
-    config: {repo: vllm-project/vllm, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+    config: {repo: vllm-project/vllm, include_releases: true, include_issues: false}
 
   - id: github_sglang
     name: GitHub — SGLang
@@ -86,7 +86,7 @@ sources:
     enabled: true
     region: GLOBAL
     language: en
-    config: {repo: sgl-project/sglang, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+    config: {repo: sgl-project/sglang, include_releases: true, include_issues: false}
 
   - id: github_llamacpp
     name: GitHub — llama.cpp
@@ -94,7 +94,7 @@ sources:
     enabled: true
     region: GLOBAL
     language: en
-    config: {repo: ggml-org/llama.cpp, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+    config: {repo: ggml-org/llama.cpp, include_releases: true, include_issues: false}
 
   - id: github_mlx_lm
     name: GitHub — MLX LM
@@ -102,7 +102,7 @@ sources:
     enabled: true
     region: GLOBAL
     language: en
-    config: {repo: ml-explore/mlx-lm, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+    config: {repo: ml-explore/mlx-lm, include_releases: true, include_issues: false}
 
   - id: github_qwen3
     name: GitHub — Qwen3
@@ -110,12 +110,12 @@ sources:
     enabled: true
     region: CN
     language: en
-    config: {repo: QwenLM/Qwen3, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+    config: {repo: QwenLM/Qwen3, include_releases: true, include_issues: false}
 
   - id: github_deepseek_org
     name: GitHub — DeepSeek organization
     type: github_org
-    enabled: true
+    enabled: false
     region: CN
     language: en
     config: {org: deepseek-ai, repo_limit: 30}
@@ -123,7 +123,7 @@ sources:
   - id: github_openbmb
     name: GitHub — OpenBMB
     type: github_org
-    enabled: true
+    enabled: false
     region: CN
     language: en
     config: {org: OpenBMB, repo_limit: 30}
@@ -131,7 +131,7 @@ sources:
   - id: github_internlm
     name: GitHub — InternLM
     type: github_org
-    enabled: true
+    enabled: false
     region: CN
     language: en
     config: {org: InternLM, repo_limit: 30}
@@ -142,7 +142,7 @@ sources:
     enabled: true
     region: GLOBAL
     language: en
-    config: {repo: scipopt/scip, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+    config: {repo: scipopt/scip, include_releases: true, include_issues: false}
 
   - id: github_highs
     name: GitHub — HiGHS
@@ -150,7 +150,7 @@ sources:
     enabled: true
     region: GLOBAL
     language: en
-    config: {repo: ERGO-Code/HiGHS, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+    config: {repo: ERGO-Code/HiGHS, include_releases: true, include_issues: false}
 
   - id: github_ortools
     name: GitHub — OR-Tools
@@ -158,9 +158,31 @@ sources:
     enabled: true
     region: GLOBAL
     language: en
-    config: {repo: google/or-tools, include_releases: true, include_issues: true, issue_state: open, issue_limit: 20}
+    config: {repo: google/or-tools, include_releases: true, include_issues: false}
 
   # Developer/social impact
+  - id: x_ai_or
+    name: X — high-signal AI/OR posts
+    type: x
+    enabled: false
+    region: GLOBAL
+    language: en
+    homepage: https://x.com/
+    config:
+      query: '("agent evaluation" OR "test-time scaling" OR "LLM inference" OR "vision-language" OR "neural combinatorial optimization") has:links -is:retweet -is:reply'
+      max_results: 25
+
+  - id: bluesky_ai_or
+    name: Bluesky — AI/OR technical discussion
+    type: bluesky
+    enabled: false
+    region: GLOBAL
+    language: en
+    homepage: https://bsky.app/
+    config:
+      query: 'agent evaluation OR test-time scaling OR LLM inference OR optimization solver'
+      limit: 25
+
   - id: hackernews_ai
     name: Hacker News — AI/OR filter
     type: hackernews
@@ -187,7 +209,15 @@ sources:
   - {id: modelscope, name: "魔搭社区 / ModelScope", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://modelscope.cn/"}
   - {id: openi, name: "启智社区 / OpenI", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.openi.org.cn/"}
   - {id: jiqizhixin, name: "机器之心", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.jiqizhixin.com/"}
-  - {id: qbitai, name: "量子位", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.qbitai.com/"}
+  - id: qbitai
+    name: 量子位
+    type: rss
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://www.qbitai.com/
+    config:
+      feed_url: https://www.qbitai.com/feed
   - {id: xinzhiyuan, name: "新智元", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.aixinzhijie.com/"}
   - {id: infoq_cn_ai, name: "InfoQ 中国 AI", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.infoq.cn/topic/AI"}
   - {id: kr36_ai, name: "36氪 AI", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.36kr.com/"}

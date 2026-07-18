@@ -33,9 +33,12 @@ Official documentation:
 - Generic RSS/Atom feeds
 - GitHub releases and issues
 - Hacker News new/best stories
+- Bluesky public technical-post search
+- X seven-day recent search when an `X_BEARER_TOKEN` is configured
 - OpenReview API v2 venue ingestion
 - YouTube search API
 - Manual JSONL intake for WeChat/Jike/Weibo/Zhihu/private groups
+- Automated QbitAI Chinese-language RSS intake
 - URL and fuzzy-title deduplication
 - Mandarin/English normalization
 - Claim extraction

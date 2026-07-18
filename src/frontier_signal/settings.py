@@ -12,6 +12,7 @@ class Settings(BaseSettings):
 
     github_token: str = ""
     youtube_api_key: str = ""
+    x_bearer_token: str = ""
 
     database_url: str = "sqlite:///frontier_signal.db"
     config_dir: Path = Path("config")
