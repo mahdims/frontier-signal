@@ -1,11 +1,21 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
+import json
 from pathlib import Path
 from urllib.parse import urlparse
+from uuid import uuid4
 
-from .db import recent_analyses
+from .db import pending_report, recent_analyses, save_report
 from .settings import settings
+
+
+@dataclass(frozen=True)
+class ReportResult:
+    report_id: str
+    path: Path
+    reused_pending: bool
 
 
 def safe_public_url(url: str) -> bool:
@@ -13,24 +23,39 @@ def safe_public_url(url: str) -> bool:
     return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
 
 
-def render_daily(hours: int = 30) -> Path:
+def _write_report_files(report_id: str, content: str, created_at: datetime) -> Path:
+    out_dir = settings.output_dir / "daily"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / f"{created_at.date().isoformat()}-{report_id}.md"
+    path.write_text(content, encoding="utf-8")
+    (out_dir / "latest.json").write_text(
+        json.dumps({"report_id": report_id, "path": str(path)}),
+        encoding="utf-8",
+    )
+    return path
+
+
+def render_daily(hours: int = 30, include_reported: bool = False) -> ReportResult:
+    if not include_reported:
+        existing = pending_report()
+        if existing is not None:
+            path = _write_report_files(existing.id, existing.content, existing.created_at)
+            return ReportResult(existing.id, path, reused_pending=True)
+
     since = datetime.now(timezone.utc) - timedelta(hours=hours)
-    pairs = recent_analyses(since, limit=300)
+    pairs = recent_analyses(since, limit=300, include_reported=include_reported)
 
     selected = []
-    for item, analysis in pairs:
+    for item, analysis_row, analysis in pairs:
         if len(selected) >= settings.report_max_items:
             break
         if item.visibility != "public" and not settings.share_private_items:
             continue
         if not safe_public_url(item.url):
             continue
-        selected.append((item, analysis))
+        selected.append((item, analysis_row.id, analysis))
 
     now = datetime.now(timezone.utc)
-    out_dir = settings.output_dir / "daily"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    path = out_dir / f"{now.date().isoformat()}.md"
 
     lines = [
         f"# Frontier Signal Daily Radar — {now.date().isoformat()}",
@@ -41,7 +66,7 @@ def render_daily(hours: int = 30) -> Path:
         "",
     ]
 
-    for rank, (item, a) in enumerate(selected, start=1):
+    for rank, (item, _, a) in enumerate(selected, start=1):
         title = a.translated_title or item.title
         lines += [
             f"## {rank}. [{title}]({item.url})",
@@ -92,5 +117,13 @@ def render_daily(hours: int = 30) -> Path:
             "",
         ]
 
-    path.write_text("\n".join(lines), encoding="utf-8")
-    return path
+    content = "\n".join(lines)
+    report_id = str(uuid4())
+    save_report(
+        report_id,
+        content,
+        [analysis_id for _, analysis_id, _ in selected],
+        includes_reported=include_reported,
+    )
+    path = _write_report_files(report_id, content, now)
+    return ReportResult(report_id, path, reused_pending=False)

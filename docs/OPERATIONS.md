@@ -32,6 +32,18 @@ If email delivery fails after a successful run, manually run the workflow with
 `delivery_only` enabled. It restores the cached database, regenerates and sends the report,
 and does not collect sources or call DeepSeek.
 
+## Delivery ledger and duplicate prevention
+
+Each generated report and its included analysis IDs are stored in the SQLite database.
+Normal daily reports select only analyses that have never appeared in an earlier report.
+If SMTP delivery fails, the report remains pending and `delivery_only` resends the exact
+stored content rather than generating or analyzing anything again. After successful email
+delivery, the workflow marks the report delivered and saves a second database checkpoint.
+
+Manual workflow runs expose an `include_reported` option for intentionally building a
+report that may repeat previously reported items. Leave it disabled for routine delivery.
+The CLI equivalent is `frontier-signal report --include-reported`.
+
 Scheduled workflows only run from the repository's default branch, so merge the workflow
 there after testing it with a manual run.
 

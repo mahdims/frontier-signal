@@ -13,6 +13,11 @@ on:
         required: false
         default: false
         type: boolean
+      include_reported:
+        description: Intentionally allow items that appeared in earlier reports
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: daily-frontier-signal-radar
@@ -67,24 +72,32 @@ jobs:
 
       - name: Run collection, analysis, and reporting
         if: ${{ !inputs.delivery_only }}
-        run: frontier-signal run-daily
+        run: |
+          extra_args=()
+          if [[ "${{ inputs.include_reported }}" == "true" ]]; then
+            extra_args+=(--include-reported)
+          fi
+          frontier-signal run-daily "${extra_args[@]}"
 
       - name: Regenerate report from saved results
         if: ${{ inputs.delivery_only }}
         run: |
           test -s frontier_signal.db || { echo "No cached database was restored" >&2; exit 1; }
-          frontier-signal report --hours 168
+          extra_args=()
+          if [[ "${{ inputs.include_reported }}" == "true" ]]; then
+            extra_args+=(--include-reported)
+          fi
+          frontier-signal report --hours 168 "${extra_args[@]}"
 
       - name: Locate today's report
         id: report
         shell: bash
         run: |
-          report_path="$(find outputs/daily -type f -name '*.md' -print | sort | tail -n 1)"
-          if [[ -z "$report_path" ]]; then
-            echo "No daily report was generated" >&2
-            exit 1
-          fi
+          test -s outputs/daily/latest.json || { echo "No report metadata was generated" >&2; exit 1; }
+          report_path="$(python -c 'import json; print(json.load(open("outputs/daily/latest.json"))["path"])')"
+          report_id="$(python -c 'import json; print(json.load(open("outputs/daily/latest.json"))["report_id"])')"
           echo "path=$report_path" >> "$GITHUB_OUTPUT"
+          echo "id=$report_id" >> "$GITHUB_OUTPUT"
           echo "date=$(date +%F)" >> "$GITHUB_OUTPUT"
 
       - name: Upload the daily report and database
@@ -97,12 +110,11 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Save pipeline history
-        if: ${{ !inputs.delivery_only }}
+      - name: Save pending delivery state
         uses: actions/cache/save@v4
         with:
           path: frontier_signal.db
-          key: frontier-signal-db-${{ github.run_id }}
+          key: frontier-signal-db-${{ github.run_id }}-pending
 
       - name: Email the radar through Gmail
         uses: dawidd6/action-send-mail@v18
@@ -118,3 +130,12 @@ jobs:
           html_body: file://${{ steps.report.outputs.path }}
           convert_markdown: true
           attachments: ${{ steps.report.outputs.path }}
+
+      - name: Mark report delivered
+        run: frontier-signal mark-report-delivered "${{ steps.report.outputs.id }}"
+
+      - name: Save delivered state
+        uses: actions/cache/save@v4
+        with:
+          path: frontier_signal.db
+          key: frontier-signal-db-${{ github.run_id }}-delivered

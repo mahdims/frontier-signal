@@ -6,7 +6,16 @@ from datetime import datetime, timezone
 from typing import Iterable
 
 from sqlalchemy import (
-    Boolean, DateTime, Float, Integer, String, Text, UniqueConstraint, create_engine, select
+    Boolean,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    create_engine,
+    select,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 
@@ -73,6 +82,29 @@ class FeedbackRow(Base):
     project: Mapped[str | None] = mapped_column(String(200), nullable=True)
     note: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class ReportRow(Base):
+    __tablename__ = "reports"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    kind: Mapped[str] = mapped_column(String(32), default="daily", index=True)
+    content: Mapped[str] = mapped_column(Text)
+    item_count: Mapped[int] = mapped_column(Integer, default=0)
+    includes_reported: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    delivered_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, index=True
+    )
+
+
+class ReportItemRow(Base):
+    __tablename__ = "report_items"
+    __table_args__ = (UniqueConstraint("report_id", "analysis_id", name="uq_report_analysis"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    report_id: Mapped[str] = mapped_column(ForeignKey("reports.id"), index=True)
+    analysis_id: Mapped[int] = mapped_column(ForeignKey("analyses.id"), index=True)
 
 
 engine = create_engine(settings.database_url, future=True)
@@ -166,16 +198,71 @@ def save_analysis(item_id: int, analysis: ItemAnalysis) -> None:
         session.commit()
 
 
-def recent_analyses(since: datetime, limit: int = 200) -> list[tuple[ItemRow, ItemAnalysis]]:
+def recent_analyses(
+    since: datetime, limit: int = 200, include_reported: bool = False
+) -> list[tuple[ItemRow, AnalysisRow, ItemAnalysis]]:
     with SessionLocal() as session:
-        pairs = session.execute(
+        query = (
             select(ItemRow, AnalysisRow)
             .join(AnalysisRow, AnalysisRow.item_id == ItemRow.id)
             .where(AnalysisRow.created_at >= since)
             .order_by(AnalysisRow.priority_score.desc())
             .limit(limit)
-        ).all()
-        return [(item, ItemAnalysis.model_validate_json(a.analysis_json)) for item, a in pairs]
+        )
+        if not include_reported:
+            reported_ids = select(ReportItemRow.analysis_id)
+            query = query.where(~AnalysisRow.id.in_(reported_ids))
+        pairs = session.execute(query).all()
+        return [
+            (item, analysis_row, ItemAnalysis.model_validate_json(analysis_row.analysis_json))
+            for item, analysis_row in pairs
+        ]
+
+
+def pending_report(kind: str = "daily") -> ReportRow | None:
+    with SessionLocal() as session:
+        return session.scalar(
+            select(ReportRow)
+            .where(ReportRow.kind == kind, ReportRow.delivered_at.is_(None))
+            .order_by(ReportRow.created_at.asc())
+            .limit(1)
+        )
+
+
+def save_report(
+    report_id: str,
+    content: str,
+    analysis_ids: list[int],
+    includes_reported: bool = False,
+    kind: str = "daily",
+) -> None:
+    with SessionLocal() as session:
+        session.add(
+            ReportRow(
+                id=report_id,
+                kind=kind,
+                content=content,
+                item_count=len(analysis_ids),
+                includes_reported=includes_reported,
+                created_at=datetime.now(timezone.utc),
+            )
+        )
+        session.add_all(
+            ReportItemRow(report_id=report_id, analysis_id=analysis_id)
+            for analysis_id in analysis_ids
+        )
+        session.commit()
+
+
+def mark_report_delivered(report_id: str) -> bool:
+    with SessionLocal() as session:
+        report = session.get(ReportRow, report_id)
+        if report is None:
+            return False
+        if report.delivered_at is None:
+            report.delivered_at = datetime.now(timezone.utc)
+            session.commit()
+        return True
 
 
 def log_usage(task: str, model: str, input_tokens: int, output_tokens: int, cost: float) -> None:

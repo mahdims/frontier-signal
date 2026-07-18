@@ -48,6 +48,7 @@ Official documentation:
 - Markdown daily report with direct links
 - SQLite by default; PostgreSQL-ready SQLAlchemy models
 - Daily cost guard and usage log
+- Database-backed report delivery ledger that prevents repeat items and preserves failed email deliveries
 
 ## Quick start
 

@@ -8,7 +8,7 @@ from rich.table import Table
 
 from .config import load_sources
 from .collectors.manual import load_jsonl
-from .db import init_db, save_items
+from .db import init_db, mark_report_delivered, save_items
 from .pipeline import analyze_pending
 from .report import render_daily
 from .runner import collect_all
@@ -54,21 +54,33 @@ def analyze(limit: int = 100):
 
 
 @app.command()
-def report(hours: int = 30):
+def report(hours: int = 30, include_reported: bool = False):
     init_db()
-    path = render_daily(hours)
-    console.print(f"[green]Report written:[/green] {path}")
+    result = render_daily(hours, include_reported=include_reported)
+    status = "Reused pending report" if result.reused_pending else "Report written"
+    console.print(f"[green]{status}:[/green] {result.path} (id={result.report_id})")
+
+
+@app.command("mark-report-delivered")
+def mark_delivered(report_id: str):
+    init_db()
+    if not mark_report_delivered(report_id):
+        console.print(f"[red]Unknown report ID:[/red] {report_id}")
+        raise typer.Exit(code=1)
+    console.print(f"[green]Report marked delivered:[/green] {report_id}")
 
 
 @app.command("run-daily")
-def run_daily():
+def run_daily(include_reported: bool = False):
     init_db()
     collection = collect_all()
     console.print_json(json.dumps(collection))
     successes, failures = analyze_pending()
     console.print({"analyzed": successes, "failed": failures})
-    path = render_daily(30)
-    console.print(f"[green]Daily run complete:[/green] {path}")
+    result = render_daily(30, include_reported=include_reported)
+    console.print(
+        f"[green]Daily run complete:[/green] {result.path} (id={result.report_id})"
+    )
 
 
 if __name__ == "__main__":
