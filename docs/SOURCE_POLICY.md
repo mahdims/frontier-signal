@@ -45,3 +45,9 @@ The system may store a private-group item for personal use, but:
 ## Platform compliance
 
 Use official APIs where available. Use RSS or public pages where permitted. Use manual forwarding, exports, or user-operated browser capture for closed platforms. Do not bypass authentication, access controls, rate limits, or anti-bot protections.
+
+Public HTML collectors identify themselves with a dedicated user agent, check `robots.txt`,
+stay on the configured host, target source-specific article URL shapes, and cap the number
+of detail pages fetched per run. A source is kept disabled/manual when its feed is dead,
+its page is client-only or paywalled, or automated access is disallowed. The audited
+China-focused registry and per-source reasons live in `config/china_sources.yaml`.

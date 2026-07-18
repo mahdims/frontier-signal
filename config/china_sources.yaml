@@ -1,0 +1,235 @@
+# China-focused media registry. Automated sources are enabled only after a live probe.
+# Manual entries remain discoverable in `frontier-signal sources` without entering the
+# nightly collection loop.
+
+ai_keywords_zh: &ai_keywords_zh
+  ["AI", "人工智能", "大模型", "智能体", "机器人", "机器学习", "深度学习", "算力", "芯片", "模型", "DeepSeek", "Qwen"]
+ai_keywords_en: &ai_keywords_en
+  ["AI", "artificial intelligence", "machine learning", "LLM", "foundation model", "robot", "semiconductor", "DeepSeek", "Qwen", "China tech"]
+
+sources:
+  # Chinese-language AI-specialized media
+  - {id: jiqizhixin, name: "机器之心 / Synced", type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://www.jiqizhixin.com/", config: {reason: "Client-rendered site; no stable public feed/API found"}}
+  - id: qbitai
+    name: 量子位 / QbitAI
+    type: rss
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://www.qbitai.com/
+    config: {feed_url: "https://www.qbitai.com/feed", max_items: 6, keywords: *ai_keywords_zh}
+  - {id: xinzhiyuan, name: "新智元 / AI Era", type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://www.aixinzhijie.com/", config: {reason: "Public domain did not resolve during verification"}}
+  - id: leiphone_ai
+    name: 雷锋网
+    type: rss
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://www.leiphone.com/category/ai
+    config: {feed_url: "https://www.leiphone.com/feed", max_items: 6, keywords: *ai_keywords_zh}
+  - {id: csdn_ai_hub, name: "AI科技大本营 / CSDN AI", type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://ai.csdn.net/", config: {reason: "Client-rendered listing; manual forwarding retained"}}
+  - id: zhidx_ai
+    name: 智东西
+    type: web
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://zhidx.com/
+    config: {list_url: "https://zhidx.com/", article_url_pattern: "^/p/[0-9]+\\.html$", max_items: 5}
+  - {id: ml_research_cn, name: 机器学习研究会, type: manual_private, enabled: false, region: CN, language: zh, config: {reason: "WeChat/social channel without a stable public API"}}
+  - {id: paperweekly, name: PaperWeekly, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://www.paperweekly.site/", config: {reason: "Public site refused connections during verification"}}
+  - {id: techbeat, name: "将门创投 / TechBeat", type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://www.techbeat.net/", config: {reason: "Client-rendered listing; no stable public feed found"}}
+  - {id: dl_frontier_cn, name: 深度学习技术前沿, type: manual_private, enabled: false, region: CN, language: zh, config: {reason: "WeChat/social channel without a stable public API"}}
+
+  # Chinese technology and business media
+  - id: kr36_ai
+    name: 36氪
+    type: rss
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://36kr.com/
+    config: {feed_url: "https://36kr.com/feed-article", max_items: 6, keywords: *ai_keywords_zh}
+  - id: huxiu_ai
+    name: 虎嗅
+    type: rss
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://www.huxiu.com/
+    config: {feed_url: "https://rss.huxiu.com/", max_items: 6, keywords: *ai_keywords_zh}
+  - id: tmtpost_ai
+    name: 钛媒体
+    type: rss
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://www.tmtpost.com/
+    config: {feed_url: "https://www.tmtpost.com/rss.xml", max_items: 6, keywords: *ai_keywords_zh}
+  - {id: pingwest_cn, name: 品玩, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://www.pingwest.com/", config: {reason: "Public listing returned method restrictions during verification"}}
+  - id: infoq_cn_ai
+    name: InfoQ 中国
+    type: rss
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://www.infoq.cn/topic/AI
+    config: {feed_url: "https://www.infoq.cn/feed", max_items: 6, keywords: *ai_keywords_zh}
+  - {id: csdn_main_ai, name: CSDN, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://www.csdn.net/", config: {reason: "Broad client-rendered portal; CSDN AI retained as manual to avoid noise"}}
+  - {id: geekpark_ai, name: 极客公园, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://www.geekpark.net/", config: {reason: "Official RSS and homepage timed out during verification"}}
+  - id: ifanr_ai
+    name: 爱范儿
+    type: rss
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://www.ifanr.com/
+    config: {feed_url: "https://www.ifanr.com/feed", max_items: 6, keywords: *ai_keywords_zh}
+  - id: sspai_ai
+    name: 少数派
+    type: rss
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://sspai.com/
+    config: {feed_url: "https://sspai.com/feed", max_items: 5, keywords: *ai_keywords_zh}
+  - id: jiemian_tech_ai
+    name: 界面新闻科技
+    type: web
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://www.jiemian.com/lists/280.html
+    config: {article_url_pattern: "^/article/[0-9]+\\.html$", max_items: 5, keywords: *ai_keywords_zh}
+  - id: caixin_tech_ai
+    name: 财新科技
+    type: web
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://science.caixin.com/
+    config: {article_url_pattern: "^/[0-9]{4}-[0-9]{2}-[0-9]{2}/[0-9]+\\.html$", max_items: 4, keywords: *ai_keywords_zh}
+  - {id: yicai_tech_ai, name: 第一财经科技, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://www.yicai.com/", config: {reason: "No stable technology listing/feed verified"}}
+  - id: thepaper_tech_ai
+    name: 澎湃新闻科技
+    type: web
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://www.thepaper.cn/channel_25950
+    config: {article_url_pattern: "^/newsDetail_forward_[0-9]+$", max_items: 5, keywords: *ai_keywords_zh}
+  - id: nbd_tech_ai
+    name: 每日经济新闻科技
+    type: web
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://www.nbd.com.cn/columns/3/
+    config: {article_url_pattern: "^/articles/[0-9]{4}-[0-9]{2}-[0-9]{2}/[0-9]+\\.html$", max_items: 4, keywords: *ai_keywords_zh}
+  - id: jingji21_tech_ai
+    name: 21世纪经济报道科技
+    type: web
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://www.21jingji.com/
+    config: {article_url_pattern: "^/article/[0-9]+/", max_items: 4, keywords: *ai_keywords_zh}
+  - id: star_market_ai
+    name: 科创板日报
+    type: web
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://www.chinastarmarket.cn/
+    config: {article_url_pattern: "^/detail/[0-9]+$", max_items: 5, keywords: *ai_keywords_zh}
+  - id: jazzyear_ai
+    name: 甲子光年
+    type: web
+    enabled: true
+    region: CN
+    language: zh
+    homepage: https://www.jazzyear.com/
+    config: {article_url_pattern: "^/article_info\\.html$", max_items: 5, keywords: *ai_keywords_zh}
+  - {id: siliconstars_cn, name: 硅星人, type: manual_private, enabled: false, region: CN, language: zh, config: {reason: "Newsletter/social brand without a stable standalone public feed"}}
+  - id: latepost_ai
+    name: 晚点 LatePost
+    type: manual_web
+    enabled: false
+    region: CN
+    language: zh
+    homepage: https://www.latepost.com/
+    config: {reason: "robots.txt disallows automated collection"}
+  - {id: tencent_tech_ai, name: 腾讯科技, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://news.qq.com/ch/tech/", config: {reason: "Client-rendered listing did not expose stable article links"}}
+  - {id: netease_tech_ai, name: 网易科技, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://tech.163.com/", config: {reason: "Homepage did not expose a reliable article list to the public scraper"}}
+  - {id: sina_tech_ai, name: 新浪科技, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://tech.sina.com.cn/", config: {reason: "Homepage did not expose a reliable same-host article list"}}
+
+  # Corporate and research-lab channels
+  - {id: baai_hub, name: 智源研究院 / BAAI, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://hub.baai.ac.cn/", config: {reason: "Client-rendered portal; no stable public feed verified"}}
+  - {id: alibaba_damo, name: 阿里达摩院, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://damo.alibaba.com/", config: {reason: "Client-rendered research site; no stable public feed verified"}}
+  - {id: tencent_ai_lab, name: 腾讯 AI Lab / 腾讯研究院, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://ai.tencent.com/ailab/", config: {reason: "Static/client-rendered research site without a current public feed"}}
+  - {id: baidu_research, name: 百度研究院, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://research.baidu.com/", config: {reason: "Client-rendered research site without a current public feed"}}
+  - {id: huawei_noah, name: 华为诺亚方舟实验室, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://noahlab.com.hk/news", config: {reason: "News listing exposes no stable article URLs in server-rendered HTML"}}
+  - {id: sensetime_news, name: 商汤科技, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://www.sensetime.com/cn/news-index", config: {reason: "Page mixes products and news; source-specific API still required"}}
+  - {id: megvii_news, name: 旷视科技, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://www.megvii.com/news", config: {reason: "Page mixes navigation and news; source-specific API still required"}}
+  - id: deepseek_official_news
+    name: DeepSeek 官方动态
+    type: manual_web
+    enabled: false
+    region: CN
+    language: en
+    homepage: https://api-docs.deepseek.com/news/
+    config: {reason: "Official index exposes generic link labels and no stable structured feed"}
+  - {id: zhipu_official, name: 智谱 AI / Zhipu, type: manual_web, enabled: false, region: CN, language: zh, homepage: "https://www.zhipuai.cn/zh", config: {reason: "Client-rendered site did not expose public article links"}}
+
+  # English-language China-focused outlets
+  - id: scmp_china_tech
+    name: South China Morning Post — China Tech
+    type: rss
+    enabled: true
+    region: CN
+    language: en
+    homepage: https://www.scmp.com/topics/china-technology
+    config: {feed_url: "https://www.scmp.com/rss/4/feed/", max_items: 6, keywords: *ai_keywords_en}
+  - {id: caixin_global_tech, name: Caixin Global Tech, type: manual_web, enabled: false, region: CN, language: en, homepage: "https://www.caixinglobal.com/", config: {reason: "RSS returned 403 and technology path was unavailable"}}
+  - id: technode_china
+    name: TechNode
+    type: rss
+    enabled: true
+    region: CN
+    language: en
+    homepage: https://technode.com/
+    config: {feed_url: "https://technode.com/feed/", max_items: 6, keywords: *ai_keywords_en}
+  - id: pandaily_china
+    name: Pandaily
+    type: rss
+    enabled: true
+    region: CN
+    language: en
+    homepage: https://pandaily.com/
+    config: {feed_url: "https://pandaily.com/feed/", max_items: 6, keywords: *ai_keywords_en}
+  - id: sixthtone_tech
+    name: Sixth Tone
+    type: rss
+    enabled: true
+    region: CN
+    language: en
+    homepage: https://www.sixthtone.com/
+    config: {feed_url: "https://www.sixthtone.com/rss", max_items: 5, keywords: *ai_keywords_en}
+  - id: chinatalk
+    name: ChinaTalk
+    type: rss
+    enabled: true
+    region: CN
+    language: en
+    homepage: https://www.chinatalk.media/
+    config: {feed_url: "https://www.chinatalk.media/feed", max_items: 5, keywords: *ai_keywords_en}
+  - {id: digichina, name: DigiChina / Stanford, type: manual_web, enabled: false, region: CN, language: en, homepage: "https://digichina.stanford.edu/", config: {reason: "Official feed currently returns zero entries"}}
+  - {id: china_project_archive, name: The China Project archive, type: manual_web, enabled: false, region: CN, language: en, homepage: "https://thechinaproject.com/", config: {reason: "Legacy/archive outlet; no current feed"}}
+  - id: chinai_newsletter
+    name: ChinAI Newsletter
+    type: rss
+    enabled: true
+    region: CN
+    language: en
+    homepage: https://chinai.substack.com/
+    config: {feed_url: "https://chinai.substack.com/feed", max_items: 5, keywords: *ai_keywords_en}

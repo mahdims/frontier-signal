@@ -205,23 +205,8 @@ sources:
       max_results_per_query: 10
 
   # China public sources: monitored/manual unless a stable feed is configured.
-  - {id: baai_hub, name: "智源社区 / BAAI Hub", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://hub.baai.ac.cn/"}
   - {id: modelscope, name: "魔搭社区 / ModelScope", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://modelscope.cn/"}
   - {id: openi, name: "启智社区 / OpenI", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.openi.org.cn/"}
-  - {id: jiqizhixin, name: "机器之心", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.jiqizhixin.com/"}
-  - id: qbitai
-    name: 量子位
-    type: rss
-    enabled: true
-    region: CN
-    language: zh
-    homepage: https://www.qbitai.com/
-    config:
-      feed_url: https://www.qbitai.com/feed
-  - {id: xinzhiyuan, name: "新智元", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.aixinzhijie.com/"}
-  - {id: infoq_cn_ai, name: "InfoQ 中国 AI", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.infoq.cn/topic/AI"}
-  - {id: kr36_ai, name: "36氪 AI", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.36kr.com/"}
-  - {id: leiphone_ai, name: "雷峰网 AI", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.leiphone.com/category/ai"}
   - {id: jike_ai, name: "即刻 / Jike", type: manual_private, enabled: true, region: CN, language: zh, homepage: "https://web.okjike.com/"}
   - {id: weibo_ai, name: "微博 / Weibo", type: manual_private, enabled: true, region: CN, language: zh, homepage: "https://weibo.com/"}
   - {id: zhihu_ai, name: "知乎 / Zhihu", type: manual_web, enabled: true, region: CN, language: zh, homepage: "https://www.zhihu.com/"}

@@ -39,6 +39,8 @@ Official documentation:
 - YouTube search API
 - Manual JSONL intake for WeChat/Jike/Weibo/Zhihu/private groups
 - Automated QbitAI Chinese-language RSS intake
+- A 50-outlet China-focused media registry with 22 live-tested automated RSS/public-web sources
+- Per-source AI keyword filters and small collection caps to control noise and LLM cost
 - URL and fuzzy-title deduplication
 - Mandarin/English normalization
 - Claim extraction

@@ -13,8 +13,18 @@ def load_yaml(path: Path) -> dict:
 
 
 def load_sources() -> list[SourceConfig]:
-    data = load_yaml(settings.config_dir / "sources.yaml")
-    return [SourceConfig.model_validate(x) for x in data.get("sources", [])]
+    entries: list[dict] = []
+    for filename in ("sources.yaml", "china_sources.yaml"):
+        path = settings.config_dir / filename
+        if path.exists():
+            entries.extend(load_yaml(path).get("sources", []))
+
+    sources = [SourceConfig.model_validate(entry) for entry in entries]
+    ids = [source.id for source in sources]
+    duplicates = sorted({source_id for source_id in ids if ids.count(source_id) > 1})
+    if duplicates:
+        raise ValueError(f"Duplicate source IDs: {', '.join(duplicates)}")
+    return sources
 
 
 def source_by_id(source_id: str) -> SourceConfig:

@@ -5,6 +5,7 @@ from .hackernews import HackerNewsCollector
 from .openreview import OpenReviewCollector
 from .rss import RSSCollector
 from .youtube import YouTubeCollector
+from .web import WebCollector
 from .x import XCollector
 
 COLLECTORS = {
@@ -17,4 +18,5 @@ COLLECTORS = {
     "youtube": YouTubeCollector,
     "x": XCollector,
     "bluesky": BlueskyCollector,
+    "web": WebCollector,
 }

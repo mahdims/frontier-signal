@@ -6,6 +6,7 @@
     "Makefile",
     "README.md",
     "config/model_routing.yaml",
+    "config/china_sources.yaml",
     "config/organizations.yaml",
     "config/people.yaml",
     "config/sources.yaml",
@@ -33,6 +34,7 @@
     "src/frontier_signal/collectors/openreview.py",
     "src/frontier_signal/collectors/rss.py",
     "src/frontier_signal/collectors/youtube.py",
+    "src/frontier_signal/collectors/web.py",
     "src/frontier_signal/config.py",
     "src/frontier_signal/db.py",
     "src/frontier_signal/dedupe.py",
@@ -44,6 +46,7 @@
     "src/frontier_signal/schemas.py",
     "src/frontier_signal/settings.py",
     "tests/test_db.py",
+    "tests/test_news_collectors.py",
     "tests/test_ranking.py"
   ],
   "entrypoint": "frontier-signal",
