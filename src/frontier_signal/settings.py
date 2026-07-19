@@ -24,6 +24,13 @@ class Settings(BaseSettings):
     max_items_analyzed_per_run: int = 150
     pro_priority_threshold: float = 68.0
     report_max_items: int = 15
+    max_item_age_days: int = 7
+    report_timezone: str = "America/Vancouver"
+    report_github_max_items: int = 3
+    report_per_source_max_items: int = 1
+    report_china_min_items: int = 4
+    report_social_min_items: int = 2
+    report_academic_min_items: int = 3
     share_private_items: bool = False
 
 

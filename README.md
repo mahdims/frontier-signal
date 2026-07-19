@@ -51,6 +51,8 @@ Official documentation:
 - SQLite by default; PostgreSQL-ready SQLAlchemy models
 - Daily cost guard and usage log
 - Database-backed report delivery ledger that prevents repeat items and preserves failed email deliveries
+- Seven-day freshness filtering and automatic cleanup of stale, disabled, unanalysed backlog
+- Balanced daily selection with caps for GitHub and individual sources
 
 ## Quick start
 
@@ -78,7 +80,7 @@ frontier-signal run-daily
 The report is written to:
 
 ```text
-outputs/daily/YYYY-MM-DD.md
+outputs/daily/YYYY-MM-DD-REPORT_ID.md
 ```
 
 ## Docker database
@@ -126,6 +128,7 @@ frontier-signal init-db
 frontier-signal collect [--source SOURCE_ID]
 frontier-signal ingest-manual PATH
 frontier-signal analyze [--limit N]
+frontier-signal prune-backlog [--days N]
 frontier-signal report [--hours N]
 frontier-signal run-daily
 frontier-signal sources

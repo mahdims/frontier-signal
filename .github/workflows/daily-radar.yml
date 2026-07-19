@@ -95,10 +95,13 @@ jobs:
         run: |
           test -s outputs/daily/latest.json || { echo "No report metadata was generated" >&2; exit 1; }
           report_path="$(python -c 'import json; print(json.load(open("outputs/daily/latest.json"))["path"])')"
+          email_path="$(python -c 'import json; print(json.load(open("outputs/daily/latest.json"))["email_path"])')"
           report_id="$(python -c 'import json; print(json.load(open("outputs/daily/latest.json"))["report_id"])')"
+          report_date="$(python -c 'import json; print(json.load(open("outputs/daily/latest.json"))["date"])')"
           echo "path=$report_path" >> "$GITHUB_OUTPUT"
+          echo "email_path=$email_path" >> "$GITHUB_OUTPUT"
           echo "id=$report_id" >> "$GITHUB_OUTPUT"
-          echo "date=$(date +%F)" >> "$GITHUB_OUTPUT"
+          echo "date=$report_date" >> "$GITHUB_OUTPUT"
 
       - name: Upload the daily report and database
         uses: actions/upload-artifact@v4
@@ -106,6 +109,7 @@ jobs:
           name: frontier-signal-radar-${{ steps.report.outputs.date }}
           path: |
             ${{ steps.report.outputs.path }}
+            ${{ steps.report.outputs.email_path }}
             frontier_signal.db
           if-no-files-found: error
           retention-days: 30
@@ -127,7 +131,7 @@ jobs:
           subject: Frontier Signal daily radar — ${{ steps.report.outputs.date }}
           to: ${{ vars.REPORT_EMAIL_TO }}
           from: Frontier Signal <${{ secrets.GMAIL_USERNAME }}>
-          html_body: file://${{ steps.report.outputs.path }}
+          html_body: file://${{ steps.report.outputs.email_path }}
           convert_markdown: true
           attachments: ${{ steps.report.outputs.path }}
 

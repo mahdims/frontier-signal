@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Iterable
 
 from sqlalchemy import (
@@ -180,6 +180,42 @@ def pending_items(limit: int) -> list[ItemRow]:
             .limit(limit)
         ).all()
         return list(rows)
+
+
+def prune_pending_items(
+    active_source_ids: set[str],
+    issue_disabled_source_ids: set[str],
+    max_age_days: int = 7,
+) -> dict[str, int]:
+    cutoff = datetime.now(timezone.utc) - timedelta(days=max_age_days)
+    counts = {"stale": 0, "disabled_source": 0, "disabled_github_issue": 0}
+
+    with SessionLocal() as session:
+        rows = session.scalars(select(ItemRow).where(ItemRow.analyzed.is_(False))).all()
+        for row in rows:
+            reason = None
+            metadata = json.loads(row.metadata_json or "{}")
+            item_time = row.published_at or row.retrieved_at
+            if item_time.tzinfo is None:
+                item_time = item_time.replace(tzinfo=timezone.utc)
+
+            if row.source_id not in active_source_ids:
+                reason = "disabled_source"
+            elif (
+                row.source_id in issue_disabled_source_ids
+                and metadata.get("kind") == "issue"
+            ):
+                reason = "disabled_github_issue"
+            elif item_time < cutoff:
+                reason = "stale"
+
+            if reason:
+                session.delete(row)
+                counts[reason] += 1
+        session.commit()
+
+    counts["deleted"] = sum(counts.values())
+    return counts
 
 
 def save_analysis(item_id: int, analysis: ItemAnalysis) -> None:

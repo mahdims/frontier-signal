@@ -23,8 +23,8 @@ Add this repository variable under **Settings → Secrets and variables → Acti
 
 The workflow uses the built-in `GITHUB_TOKEN` for GitHub collection. It restores the
 SQLite database from the previous run so already-seen items are not analyzed and emailed
-again, uploads each Markdown report as a 30-day workflow artifact, and sends the same
-report as a rendered HTML email with the Markdown file attached. The uploaded artifact
+again, uploads each full Markdown report as a 30-day workflow artifact, and sends a compact
+title/label/summary digest with the full Markdown report attached. The uploaded artifact
 also contains the SQLite database, so collected items, analyses, and LLM usage records can
 be recovered independently of the workflow cache.
 
@@ -43,6 +43,15 @@ delivery, the workflow marks the report delivered and saves a second database ch
 Manual workflow runs expose an `include_reported` option for intentionally building a
 report that may repeat previously reported items. Leave it disabled for routine delivery.
 The CLI equivalent is `frontier-signal report --include-reported`.
+
+Before analysis, each daily run removes only unanalysed backlog that is older than seven
+days, belongs to a disabled/removed source, or is a GitHub issue from a release-only feed.
+Previously paid analyses and stored reports are retained. Report selection also rejects
+items older than seven days, limits GitHub to three entries, limits each source to one
+entry, and reserves available space for Chinese media, academic papers, and social signals.
+These defaults can be adjusted with the `REPORT_*` and `MAX_ITEM_AGE_DAYS` environment
+settings. Run `frontier-signal prune-backlog --days 7` to apply the same safe cleanup
+locally.
 
 Scheduled workflows only run from the repository's default branch, so merge the workflow
 there after testing it with a manual run.

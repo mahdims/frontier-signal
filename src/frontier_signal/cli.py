@@ -8,13 +8,33 @@ from rich.table import Table
 
 from .config import load_sources
 from .collectors.manual import load_jsonl
-from .db import init_db, mark_report_delivered, save_items
+from .db import init_db, mark_report_delivered, prune_pending_items, save_items
 from .pipeline import analyze_pending
 from .report import render_daily
 from .runner import collect_all
+from .settings import settings
 
 app = typer.Typer(no_args_is_help=True)
 console = Console()
+
+
+def _prune_backlog(max_age_days: int) -> dict[str, int]:
+    sources = load_sources()
+    active_source_ids = {
+        source.id
+        for source in sources
+        if source.enabled
+    }
+    issue_disabled_source_ids = {
+        source.id
+        for source in sources
+        if source.type == "github_repo" and not source.config.get("include_issues", False)
+    }
+    return prune_pending_items(
+        active_source_ids,
+        issue_disabled_source_ids,
+        max_age_days=max_age_days,
+    )
 
 
 @app.command("init-db")
@@ -53,6 +73,13 @@ def analyze(limit: int = 100):
     console.print({"analyzed": successes, "failed": failures})
 
 
+@app.command("prune-backlog")
+def prune_backlog(days: int = 7):
+    """Remove stale or disabled unanalysed items before they incur LLM cost."""
+    init_db()
+    console.print(_prune_backlog(days))
+
+
 @app.command()
 def report(hours: int = 30, include_reported: bool = False):
     init_db()
@@ -75,6 +102,7 @@ def run_daily(include_reported: bool = False):
     init_db()
     collection = collect_all()
     console.print_json(json.dumps(collection))
+    console.print({"backlog_cleanup": _prune_backlog(settings.max_item_age_days)})
     successes, failures = analyze_pending()
     console.print({"analyzed": successes, "failed": failures})
     result = render_daily(30, include_reported=include_reported)
