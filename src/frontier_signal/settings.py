@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     max_daily_llm_cost_usd: float = 3.0
     max_pro_calls_per_day: int = 25
     max_items_analyzed_per_run: int = 150
+    max_llm_content_chars: int = 8000
+    max_translation_content_chars: int = 4000
     pro_priority_threshold: float = 68.0
     report_max_items: int = 15
     max_item_age_days: int = 7

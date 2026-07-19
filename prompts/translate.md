@@ -9,6 +9,9 @@ Do not:
 - invent a public source;
 - add background knowledge not contained in the item.
 
+Keep `translated_content` concise and no longer than the supplied source content. Omit
+navigation, image captions, repeated boilerplate, and raw HTML artifacts.
+
 Return only one JSON object:
 
 {

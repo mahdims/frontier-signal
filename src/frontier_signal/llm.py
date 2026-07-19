@@ -2,8 +2,14 @@ from __future__ import annotations
 
 import json
 from typing import TypeVar, Type
-from openai import OpenAI
-from pydantic import BaseModel, ValidationError
+from openai import (
+    APIConnectionError,
+    APITimeoutError,
+    InternalServerError,
+    OpenAI,
+    RateLimitError,
+)
+from pydantic import BaseModel
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 from .config import load_model_routing
@@ -14,6 +20,10 @@ T = TypeVar("T", bound=BaseModel)
 
 
 class BudgetExceeded(RuntimeError):
+    pass
+
+
+class TruncatedResponse(RuntimeError):
     pass
 
 
@@ -36,7 +46,9 @@ class DeepSeekGateway:
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(min=1, max=20),
-        retry=retry_if_exception_type((ValidationError, json.JSONDecodeError, RuntimeError)),
+        retry=retry_if_exception_type(
+            (APIConnectionError, APITimeoutError, RateLimitError, InternalServerError)
+        ),
         reraise=True,
     )
     def call_json(
@@ -76,13 +88,18 @@ class DeepSeekGateway:
 
         response = self.client.chat.completions.create(**kwargs)
         content = response.choices[0].message.content or "{}"
-        result = response_model.model_validate_json(content)
 
         usage = response.usage
         input_tokens = int(getattr(usage, "prompt_tokens", 0) or 0)
         output_tokens = int(getattr(usage, "completion_tokens", 0) or 0)
         cost = self._estimate_cost(model, input_tokens, output_tokens)
         log_usage(task, model, input_tokens, output_tokens, cost)
+        finish_reason = getattr(response.choices[0], "finish_reason", None)
+        if finish_reason == "length":
+            raise TruncatedResponse(
+                f"{task} response hit its output-token limit; input/output must be reduced"
+            )
+        result = response_model.model_validate_json(content)
         return result
 
 

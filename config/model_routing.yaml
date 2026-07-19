@@ -12,7 +12,7 @@ routes:
   translate:
     model: deepseek-v4-flash
     thinking: disabled
-    max_tokens: 1800
+    max_tokens: 2500
   extract:
     model: deepseek-v4-flash
     thinking: disabled

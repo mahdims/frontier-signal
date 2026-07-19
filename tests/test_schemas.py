@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import pytest
 from pydantic import ValidationError
 
-from frontier_signal.schemas import AtomicClaim, RawItem
+from frontier_signal.schemas import AtomicClaim, RawItem, SkepticResult
 
 
 def test_raw_item_accepts_rfc_2822_published_date():
@@ -28,3 +28,13 @@ def test_atomic_claim_normalizes_fractional_confidence():
 def test_atomic_claim_still_rejects_out_of_range_confidence():
     with pytest.raises(ValidationError):
         AtomicClaim(claim="Example", confidence_from_source_only=101)
+
+
+def test_skeptic_adjustments_are_clamped_to_safe_ranges():
+    result = SkepticResult(
+        confidence_adjustment=-90,
+        marketing_risk_adjustment=75,
+    )
+
+    assert result.confidence_adjustment == -50
+    assert result.marketing_risk_adjustment == 50

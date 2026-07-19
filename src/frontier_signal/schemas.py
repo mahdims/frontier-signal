@@ -120,3 +120,17 @@ class SkepticResult(BaseModel):
     confidence_adjustment: int = Field(default=0, ge=-50, le=20)
     marketing_risk_adjustment: int = Field(default=0, ge=-20, le=50)
     final_assessment: str = ""
+
+    @field_validator("confidence_adjustment", mode="before")
+    @classmethod
+    def clamp_confidence_adjustment(cls, value: Any) -> Any:
+        if isinstance(value, (int, float)):
+            return max(-50, min(20, round(value)))
+        return value
+
+    @field_validator("marketing_risk_adjustment", mode="before")
+    @classmethod
+    def clamp_marketing_adjustment(cls, value: Any) -> Any:
+        if isinstance(value, (int, float)):
+            return max(-20, min(50, round(value)))
+        return value

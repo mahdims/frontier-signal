@@ -40,6 +40,27 @@ def test_rss_collector_filters_keywords_and_caps_items(monkeypatch):
     assert [item.title for item in items] == ["AI model release"]
 
 
+def test_rss_collector_strips_html_from_content(monkeypatch):
+    feed = b"""<?xml version="1.0"?><rss version="2.0"><channel><title>Feed</title>
+    <item><guid>1</guid><link>https://example.com/1</link><title>AI release</title>
+    <description><![CDATA[<p>Useful <strong>technical</strong> detail.</p><img src="x">]]></description>
+    </item></channel></rss>"""
+    monkeypatch.setattr(
+        "frontier_signal.collectors.rss.httpx.get",
+        lambda *args, **kwargs: FakeResponse(content=feed),
+    )
+    source = SourceConfig(
+        id="feed",
+        name="Feed",
+        type="rss",
+        config={"feed_url": "https://example.com/feed", "keywords": ["AI"]},
+    )
+
+    item = RSSCollector().collect(source)[0]
+
+    assert item.content == "Useful technical detail."
+
+
 class FakeClient:
     def __init__(self, *args, **kwargs):
         pass

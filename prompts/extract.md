@@ -9,6 +9,9 @@ Rules:
 - Evidence URLs may only come from URLs present in the input.
 - Express confidence_from_source_only as an integer percentage from 0 to 100, never as a 0-1 fraction.
 - Do not use outside knowledge.
+- Return at most 5 claims, choosing the most consequential independently checkable ones.
+- Return at most 10 entities and topics, and at most 5 promotional phrases or missing-evidence items.
+- Keep each claim, attribution, and list entry concise.
 
 Return only a JSON object:
 
